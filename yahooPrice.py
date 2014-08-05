@@ -5,6 +5,8 @@ for any given equity ticker using BeautifulSoup4
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from time import sleep
+from datetime import datetime
 
 class YahooPrice():
 	"""Once initiated this class will reach out to yahoo finance and 
@@ -12,10 +14,16 @@ class YahooPrice():
 
 	def __init__(self, tkr):
 		url = 'http://finance.yahoo.com/q?s=%s' %tkr
+		self.ticker = tkr
 
-		
-		tickerPage = urlopen(url)
-		
+
+		try:
+			tickerPage = urlopen(url)
+		except Exception:
+			print("Problem with connection to Yahoo. Trying again")
+			sleep(1)
+			tickerPage = urlopen(url)
+
 
 		#Turn the page into soup
 		soup = BeautifulSoup(tickerPage)
@@ -24,6 +32,14 @@ class YahooPrice():
 		for y in soup.find_all("span", class_="time_rtq_ticker"):
 			x = y.contents[0].contents
 		self.LastPrice = x[0]
+
+		#And the time of the rtq
+		for y in soup.find_all("span", class_="time_rtq"):
+			t = y.contents[1].contents[0].contents
+		self.qTime = t[0]
+
+		#System time of the request
+		self.sysTime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 		#Pull data from price table
 		s = soup.find_all("td", class_="yfnc_tabledata1")
