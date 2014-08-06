@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from time import sleep
 from datetime import datetime
 
+
 class YahooPrice():
 	"""Once initiated this class will reach out to yahoo finance and 
 	request a quote page using the given ticker"""
@@ -18,11 +19,15 @@ class YahooPrice():
 
 
 		try:
+			count = 1
 			tickerPage = urlopen(url)
 		except Exception:
 			print("Problem with connection to Yahoo. Trying again")
-			sleep(1)
+			sleep(.25)
 			tickerPage = urlopen(url)
+			if count > 4:
+				print("No connection to the internet")
+				raise SystemExit
 
 
 		#Turn the page into soup
@@ -38,11 +43,11 @@ class YahooPrice():
 			t = y.contents[1].contents[0].contents
 		self.qTime = t[0]
 
-		#System time of the request
-		self.sysTime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-
 		#Pull data from price table
 		s = soup.find_all("td", class_="yfnc_tabledata1")
+
+		#System time of the request
+		self.sysTime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 		try:
 			self.prevClose = s[0].contents[0]
