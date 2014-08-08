@@ -3,6 +3,7 @@ print the data dict to the terminal.'''
 
 import requests
 from ast import literal_eval
+from datetime import datetime
 
 
 def stringGen(Chars,Char,numChars):
@@ -30,10 +31,11 @@ def insertQuotes(strIn, field):
 	l=[]	
 	for s in field:
 		p = strIn.find(s)
-		l = list(strIn)
-		l.insert(p,"'")
-		l.insert(p+4,"'")
-		strIn = ''.join(l)	
+		if  p > 0:
+			l = list(strIn)
+			l.insert(p,"'")
+			l.insert(p+4,"'")
+			strIn = ''.join(l)	
 	d = literal_eval(strIn)
 	return d
 
@@ -66,12 +68,18 @@ def main():
 			inState = True
 		if tagE == endQ:
 			#Transition current state to Not Recording
+			#Remove end tag from recorded string
+			t = datetime.now()
+			notRecTime = {t.date().isoformat(),t.time().isoformat()}
 			s = dataCollect[:len(dataCollect)-(len(endQ)-1)]
-			retDict = insertQuotes(s,fields)	
-			# retDict = insertQuotes(insertQuotes(s,'a00'),'l84')
-			for key in retDict.keys():
-				print("key: %s , value: %s" % (key, retDict[key]))
-
+			#Sometimes an empty string is returned, this skips them
+			if len(s)>0:
+				retDict = insertQuotes(s,fields)
+				retDict['timeStamp'] = notRecTime	
+				for key in retDict.keys():
+					print("key: %s, value: %s" % (key, retDict[key]))
+			else:
+				print('-------',s,'---------')
 
 			dataCollect = '' #Reset the collection
 			inState = False #Not Recoding state
