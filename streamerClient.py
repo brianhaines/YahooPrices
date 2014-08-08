@@ -9,7 +9,7 @@ from datetime import datetime
 def stringGen(Chars,Char,numChars):
 	'''Take in one character at a time and add it to the end of the string
 	Chars while dropping the first character of the Chars string.
-	eg: Chars='hart' Char='s' => 'arts'.'''
+	eg: Chars='hart' Char='s' numChars=4 => 'arts'.'''
 
 	charList = []
 	newList=[]
@@ -43,14 +43,14 @@ def insertQuotes(strIn, field):
 def main():
 	#Initate connection to the Yahoo server
 	tickers = ('GE','MSFT','BP','OPEN','JPM','BAC')
-	fields = ('l84','a00','b00')
+	fields = ('l84','a00','b00','a50','b60')
 	fieldsStr = ','.join(fields)
 	tickerStr = ','.join(tickers)
 	url = 'http://streamerapi.finance.yahoo.com/streamer/1.0?s=%s&k=%s&r=0&callback=parent.yfs_u1f&mktmcb=parent.yfs_mktmcb&gencallback=parent.yfs_gencb' % (tickerStr,fieldsStr)
 	r = requests.get(url, stream=True)
 
-	tagB = '' #Receptical for characters
-	tagE = '' #Receptical for characters
+	tagB = '' #Recepticle for characters
+	tagE = '' #Recepticle for characters
 	beginQ = '<script>try{parent.yfs_u1f({' #Leading character tag
 	endQ = ');}catch(e){}</script>' #Trailing character tag
 	inState = False #Start the machin in the Not Recording state
@@ -77,10 +77,8 @@ def main():
 				retDict = insertQuotes(s,fields)
 				retDict['timeStamp'] = notRecTime	
 				for key in retDict.keys():
-					print("key: %s, value: %s" % (key, retDict[key]))
-			else:
-				print('-------',s,'---------')
-
+					print("%s %s" % (key, retDict[key]))
+			
 			dataCollect = '' #Reset the collection
 			inState = False #Not Recoding state
 		#When current state is Record, record all the characters that come in.
