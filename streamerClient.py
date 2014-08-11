@@ -60,7 +60,8 @@ def assignVals(varDict):
 
 def main():
 	#Initate connection to the Yahoo server
-	tickers = ('GE','MSFT','BP','JPM','BAC','XOM','CVX','UTX','GOOG','C','NFLX','AMZN')
+	tickers = ('GE','UTX','HON','BP','TOT','XOM','CVX','COP','JPM','C','BAC','GOOG','AMZN','FB','MSFT','NFLX',
+			'MRK','PFE','ABT','AGN','BAX','LLY','XEL','SO','PEG','PCG','NRG','EXC','ED','AEE')
 	fields = ('l84','a00','b00','a50','b60')
 	fieldsStr = ','.join(fields)
 	tickerStr = ','.join(tickers)
@@ -85,12 +86,10 @@ def main():
 	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, bidSize INTEGER, askSize INTEGER)''')
 
 	#Stoping time
-	fourPMstop = datetime.now().replace(hour=16, minute=0, second=0,microsecond=50000)
+	fourPMstop = datetime.now().replace(hour=16, minute=0, second=2,microsecond=50000)
 
 	#This for loops continuously
 	for char in r.iter_content():
-		
-
 		c = char.decode()
 		tagB = stringGen(tagB,c,28)
 		tagE = stringGen(tagE,c,22)
