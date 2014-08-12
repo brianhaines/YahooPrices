@@ -38,9 +38,9 @@ class keyStats():
 		Pro2 = soupPro.find_all("div", class_="title")
 
 		try:
-			self.index = Pro[0].contents[0]
+			self.indext = Pro[0].contents[0]
 		except AttributeError:
-			self.index = None
+			self.indext = None
 
 		try:
 			self.sector = Pro[1].contents[0].contents[0]
@@ -295,7 +295,7 @@ class keyStats():
 
 		#System time of the request
 		t = datetime.now()
-		tDate = t.strftime("%Y-%m-%d")
-		tTime = t.strftime("-%H-%M-%S")
+		self.tDate = t.strftime("%Y-%m-%d")
+		self.tTime = t.strftime("%H-%M-%S")
 
 				
