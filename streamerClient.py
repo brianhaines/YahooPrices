@@ -42,9 +42,9 @@ def insertQuotes(strIn, field):
 	return d
 
 def assignVals(varDict):
-	global LastPrice,bid,ask,bidSize,askSize 
+	global LastPrice,bid,ask,bidSize,askSize, volume 
 	#Start with all names == None. Will assign values to those in the dict
-	(LastPrice,bid,ask,bidSize,askSize) = (None,None,None,None,None)
+	(LastPrice,bid,ask,bidSize,askSize,volume) = (None,None,None,None,None,None)
 	#LastPrice=l84,bid=b00,ask=a00,bidSize=b60,askSize=a50
 	for dKey in varDict:
 		if dKey == 'l84':
@@ -57,12 +57,28 @@ def assignVals(varDict):
 			bidSize = varDict['b60']
 		elif dKey == 'a50':
 			askSize = varDict['a50']
+		elif dKey == 'v53':
+			volume = varDict['v53']
 
 def main():
 	#Initate connection to the Yahoo server
-	tickers = ('GE','UTX','HON','BP','TOT','XOM','CVX','COP','JPM','C','BAC','GOOG','AMZN','FB','MSFT','NFLX',
-			'MRK','PFE','ABT','AGN','BAX','LLY','XEL','SO','PEG','PCG','NRG','EXC','ED','AEE')
-	fields = ('l84','a00','b00','a50','b60')
+	ind_tkrs = ('GE','UTX','HON','MMM')
+	oil_tkrs = ('BP','TOT','XOM','CVX','COP')
+	fin_tkrs = ('JPM','C','BAC','KEY','WFC')
+	bank_tkrs = ('BBT','FITB','HBAN','MTB','PNC','STI','USB')
+	tech_tkrs = ('GOOG','AMZN','FB','MSFT','NFLX','ADBE','ORCL','AAPL')
+	pharma_tkrs = ('MRK','PFE','ABT','AGN','BAX','LLY')
+	util_tkrs = ('XEL','SO','PEG','PCG','NRG','EXC','ED','AEE')
+	aero_tkrs = ('GD','LMT','NOC','RTN')
+	pack_tkrs = ('FDX','UPS')
+	air_tkrs = ('DAL','LUV')
+	lux_tkrs = ('COH','KORS','RL','PVH','TIF')
+	car_tkrs = ('F','GM')
+	srv_tkrs = ('BHI','CAM','SLB','NOV','COG')
+
+	
+	tickers = ind_tkrs+oil_tkrs+fin_tkrs+pharma_tkrs+util_tkrs+aero_tkrs+pack_tkrs+air_tkrs+lux_tkrs+car_tkrs+srv_tkrs 
+	fields = ('l84','a00','b00','a50','b60','v53')
 	fieldsStr = ','.join(fields)
 	tickerStr = ','.join(tickers)
 	url = 'http://streamerapi.finance.yahoo.com/streamer/1.0?s=%s&k=%s&r=0&callback=parent.yfs_u1f&mktmcb=parent.yfs_mktmcb&gencallback=parent.yfs_gencb' % (tickerStr,fieldsStr)
@@ -83,7 +99,7 @@ def main():
 	# Get a cursor object
 	cursor = db.cursor()
 	#This is an SQL string to create a table in the database.
-	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, bidSize INTEGER, askSize INTEGER)''')
+	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, bidSize INTEGER, askSize INTEGER, volume INTEGER)''')
 
 	#Stoping time
 	fourPMstop = datetime.now().replace(hour=16, minute=0, second=2,microsecond=50000)
@@ -119,9 +135,9 @@ def main():
 				#'assignVals' assigns vals to global variables depending on what is 
 				# present in the returned dict (retDict)
 				assignVals(retDict[ticker])
-				print(ticker,qTime,LastPrice,bid,ask,bidSize,askSize)
+				print(ticker,qTime,LastPrice,bid,ask,bidSize,askSize,volume)
 				
-				cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, bid, ask, bidSize, askSize) VALUES(?,?,?,?,?,?,?,?,?)''', (tickTime, ticker, qDate, qTime, LastPrice, bid,ask,bidSize,askSize))
+				cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, bid, ask, bidSize, askSize, volume) VALUES(?,?,?,?,?,?,?,?,?,?)''', (tickTime,ticker,qDate,qTime,LastPrice,bid,ask,bidSize,askSize,volume))
 				db.commit()
 
 			dataCollect = '' #Reset the collection
