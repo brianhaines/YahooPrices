@@ -4,14 +4,14 @@ from datetime import datetime
 import time
 from sys import exc_info
 
-def keyStatsFunc(tkrs):
+def keyStatsFunc(tkrs,dbstr):
 	'''This function receives the list of tickers from streamerClient and loops over it
 	until the key stats have all been retreived from yahoo and inserted into the database'''
 
 	#Fire up an SQLite3 database
 	db = None
 	#create or open existing db
-	db = sqlite3.connect('livePriceDBtest.db')
+	db = sqlite3.connect(dbstr)
 	# Get a cursor object
 	cursor = db.cursor()
 	#This is an SQL string to create a table in the database.
@@ -60,7 +60,3 @@ def keyStatsFunc(tkrs):
 		db.close		
 
 		print(ks.companyName)
-		print(ks.pSales, ks.avgVol30d)
-
-		db.commit()
-		db.close
