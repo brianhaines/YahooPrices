@@ -1,4 +1,6 @@
 YahooPrices
 ===========
 
-This uses BeautifulSoup to capture live price information from finance.yahoo.com
+This project takes advantage of the Yahoo server that streams prices and other financial information to the finance.yahoo.com websites. BeautifulSoup4 is also used to scrape the key statistics page for all of the stocks one choses to follow using the streaming client.
+
+
