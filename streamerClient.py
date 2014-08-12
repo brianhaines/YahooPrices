@@ -5,6 +5,8 @@ import requests
 from ast import literal_eval
 from datetime import datetime
 import sqlite3
+from time import sleep
+from keyStatsDB import keyStatsFunc
 
 
 
@@ -28,8 +30,8 @@ def stringGen(Chars,Char,numChars):
 		return(''.join(charList))
 
 def insertQuotes(strIn, field):
-	'''Take an almost dict, find one of the keys, add single quotes around the key
-	and return a dict using ast'''
+	'''Take an almost dict, find one of the yahoo keys, 
+	add single quotes around the key and return a dict using AST'''
 	l=[]	
 	for s in field:
 		p = strIn.find(s)
@@ -61,6 +63,12 @@ def assignVals(varDict):
 			volume = varDict['v53']
 
 def main():
+	#Pause until 9:30am
+	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
+	while datetime.now()<startTime:
+		sleep(1)
+		print('Waiting for 9:30...',datetime.now())
+
 	#Initate connection to the Yahoo server
 	ind_tkrs = ('GE','UTX','HON','MMM')
 	oil_tkrs = ('BP','TOT','XOM','CVX','COP')
@@ -78,6 +86,7 @@ def main():
 
 	
 	tickers = ind_tkrs+oil_tkrs+fin_tkrs+pharma_tkrs+util_tkrs+aero_tkrs+pack_tkrs+air_tkrs+lux_tkrs+car_tkrs+srv_tkrs 
+
 	fields = ('l84','a00','b00','a50','b60','v53')
 	fieldsStr = ','.join(fields)
 	tickerStr = ','.join(tickers)
@@ -95,7 +104,8 @@ def main():
 	#Fire up an SQLite3 database
 	db = None
 	#create or open existing db
-	db = sqlite3.connect('livePriceDB.db')
+	DBstr = 'livePriceDB.db'	
+	db = sqlite3.connect(DBstr)
 	# Get a cursor object
 	cursor = db.cursor()
 	#This is an SQL string to create a table in the database.
@@ -135,10 +145,15 @@ def main():
 				#'assignVals' assigns vals to global variables depending on what is 
 				# present in the returned dict (retDict)
 				assignVals(retDict[ticker])
-				print(ticker,qTime,LastPrice,bid,ask,bidSize,askSize,volume)
+				print(ticker,qTime)
 				
 				cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, bid, ask, bidSize, askSize, volume) VALUES(?,?,?,?,?,?,?,?,?,?)''', (tickTime,ticker,qDate,qTime,LastPrice,bid,ask,bidSize,askSize,volume))
-				db.commit()
+				try:
+					db.commit()
+				except Exception:
+					sleep(.01)
+					db.commit()
+				
 
 			dataCollect = '' #Reset the collection
 			inState = False #Not Recoding state
@@ -146,6 +161,8 @@ def main():
 			#This ends the session at 4pm
 			if datetime.now()>fourPMstop:
 				print("Quitting time!")
+				#Call the key stats function here
+				keyStatsFunc(tickers,DBstr)
 				break	
 
 		#When current state is Record, record all the characters that come in.
