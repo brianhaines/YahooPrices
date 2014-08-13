@@ -17,15 +17,15 @@ The primary goal of this project is to acumulate a source of fine grained price 
 
 All that is required is updating the list of stock tickers to reflect your interests and perhaps updating the file name and path for the DB.
 
-Simply call the streamerClient.py from the command line and watch the updates scroll up your terminal!
+Simply call the `streamerClient.py` from the command line and watch the updates scroll up your terminal!
 
-This requires installation of the requests package.
+This requires installation of the `requests` package.
 
 ##The Future
 
 Current goals include:
 
-1. making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know there are gains to be had. 
+1. Making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know there are gains to be had. 
 
 2. Add multiprocessing with the goal of maintaining multiple streams from the yahoo server. More streams will increase the bandwidth for updates.
 
