@@ -39,7 +39,6 @@ def keyStatsFunc(tkrs,dbstr):
 			time.sleep(3)
 
 		#Set the variable values here
-		#tickerDate first
 		tickerDate = ks.ticker + '_' + ks.tDate
 		cursor.execute('''INSERT OR IGNORE INTO keyStats(tickerDate,avgDivYield,avgVol10d,
 						avgVol30d ,beta,bookValPS,cash,cashPS,companyName,currRatio,d52week,employees,
@@ -57,6 +56,6 @@ def keyStatsFunc(tkrs,dbstr):
 						ks.revenue,ks.revenuePS,ks.sector,ks.shortRatio,ks.shrsShrt,ks.shrsShrtNew,ks.sp52week,
 						ks.ticker,ks.totDebt,ks.totDebtEquity,ks.trailPE))
 		db.commit()
-		db.close		
-
 		print(ks.companyName)
+	db.close		
+		
