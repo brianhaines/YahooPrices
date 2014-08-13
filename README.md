@@ -27,6 +27,8 @@ Current goals include:
 
 1. making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know there are gains to be had. 
 
-2. Improving the error handling around network errors so the client will continue in the case of an interuption.
+2. Add multiprocessing with the goal of maintaining multiple streams from the yahoo server. More streams will increase the bandwidth for updates.
+
+3. Improving the error handling around network errors so the client will continue in the case of an interuption.
 
 
