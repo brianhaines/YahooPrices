@@ -20,7 +20,8 @@ def stringGen(Chars,Char,numChars):
 
 	if len(Chars)==numChars:
 		charList = list(Chars)
-		for i in range(numChars-1):
+		r = range(numChars-1)
+		for i in r: #There is probably an array optimization here
 			newList.append(charList[i+1])
 		newList.append(Char)
 		return(''.join(newList))
@@ -63,12 +64,6 @@ def assignVals(varDict):
 			volume = varDict['v53']
 
 def main():
-	#Pause until 9:30am
-	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
-	while datetime.now()<startTime:
-		sleep(1)
-		print('Waiting for 9:30...',datetime.now())
-
 	#Initate connection to the Yahoo server
 	ind_tkrs = ('GE','UTX','HON','MMM')
 	oil_tkrs = ('BP','TOT','XOM','CVX','COP')
@@ -83,13 +78,14 @@ def main():
 	lux_tkrs = ('COH','KORS','RL','PVH','TIF')
 	car_tkrs = ('F','GM')
 	srv_tkrs = ('BHI','CAM','SLB','NOV','COG')
-
+	etf_tkrs = ('XLI','XLE','XLF','KBW','XLK','XPH','XLU','OIH')
 	
-	tickers = ind_tkrs+oil_tkrs+fin_tkrs+pharma_tkrs+util_tkrs+aero_tkrs+pack_tkrs+air_tkrs+lux_tkrs+car_tkrs+srv_tkrs 
-
+	tickers = ind_tkrs+oil_tkrs+fin_tkrs+pharma_tkrs+util_tkrs+aero_tkrs+pack_tkrs+air_tkrs+lux_tkrs+car_tkrs+srv_tkrs+etf_tkrs
+	#These are the yahoo streamer codes for LastPrice, ask, bid, ask size, bid size, volume respectively
 	fields = ('l84','a00','b00','a50','b60','v53')
 	fieldsStr = ','.join(fields)
 	tickerStr = ','.join(tickers)
+
 	url = 'http://streamerapi.finance.yahoo.com/streamer/1.0?s=%s&k=%s&r=0&callback=parent.yfs_u1f&mktmcb=parent.yfs_mktmcb&gencallback=parent.yfs_gencb' % (tickerStr,fieldsStr)
 	r = requests.get(url, stream=True)
 
@@ -98,7 +94,7 @@ def main():
 	beginQ = '<script>try{parent.yfs_u1f({' #Leading character tag
 	endQ = ');}catch(e){}</script>' #Trailing character tag
 	#<script>try{parent.yfs_u1f({"MSFT":{}});}catch(e){}</script>
-	inState = False #Start the machin in the Not Recording state
+	inState = False #Start the machine in the Not Recording state
 	dataCollect = ''
 
 	#Fire up an SQLite3 database
@@ -109,10 +105,19 @@ def main():
 	# Get a cursor object
 	cursor = db.cursor()
 	#This is an SQL string to create a table in the database.
-	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, bidSize INTEGER, askSize INTEGER, volume INTEGER)''')
+	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, 
+					Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, 
+					bidSize INTEGER, askSize INTEGER, volume INTEGER)''')
+	db.commit()
 
 	#Stoping time
 	fourPMstop = datetime.now().replace(hour=16, minute=0, second=2,microsecond=50000)
+
+	#Pause until 9:30am
+	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
+	while datetime.now()<startTime:
+		sleep(1)
+		print('Waiting for 9:30...',datetime.now())
 
 	#This for loops continuously
 	for char in r.iter_content():
@@ -147,8 +152,10 @@ def main():
 				assignVals(retDict[ticker])
 				print(ticker,qTime)
 				
-				cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, bid, ask, bidSize, askSize, volume) VALUES(?,?,?,?,?,?,?,?,?,?)''', (tickTime,ticker,qDate,qTime,LastPrice,bid,ask,bidSize,askSize,volume))
 				try:
+					cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, 
+									bid, ask, bidSize, askSize, volume) VALUES(?,?,?,?,?,?,?,?,?,?)''', 
+									(tickTime,ticker,qDate,qTime,LastPrice,bid,ask,bidSize,askSize,volume))
 					db.commit()
 				except Exception:
 					sleep(.01)
@@ -161,7 +168,7 @@ def main():
 			#This ends the session at 4pm
 			if datetime.now()>fourPMstop:
 				print("Quitting time!")
-				#Call the key stats function here
+				#Call the key stats function before quitting
 				keyStatsFunc(tickers,DBstr)
 				break	
 
