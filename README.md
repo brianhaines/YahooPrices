@@ -24,6 +24,7 @@ This requires installation of the requests package.
 ##The Future
 
 Current goals include:
+
 1. making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know there are gains to be had. 
 
 2. Improving the error handling around network errors so the client will continue in the case of an interuption.
