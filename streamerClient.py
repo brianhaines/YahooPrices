@@ -14,7 +14,7 @@ def stringGen(Chars,Char,numChars):
 	'''Take in one character at a time and add it to the end of the string
 	Chars while dropping the first character of the Chars string.
 	eg: Chars='hart' Char='s' numChars=4 => 'arts'.'''
-
+	#<script>try{parent.yfs_u1f({"MSFT":{}});}catch(e){}</script>
 	charList = []
 	newList=[]
 

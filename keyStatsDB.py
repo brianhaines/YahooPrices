@@ -40,22 +40,26 @@ def keyStatsFunc(tkrs,dbstr):
 
 		#Set the variable values here
 		tickerDate = ks.ticker + '_' + ks.tDate
-		cursor.execute('''INSERT OR IGNORE INTO keyStats(tickerDate,avgDivYield,avgVol10d,
-						avgVol30d ,beta,bookValPS,cash,cashPS,companyName,currRatio,d52week,employees,
-						enterpriseValue ,floatShort,fwdDivPS,fwdDivYld,fwdPE,grossProfit ,hi52week,indext,
-						industry,lo52week,ma200day,ma50day,marketCap,netIncSH,opCashFlow,operateMarg,
-						payoutRatio,peg,profitMarg,pSales,qEarnGrth,qRevGrowth,retAssets,retEquity, 
-						revenue,revenuePS,sector,shortRatio,shrsShrt,shrsShrtNew,sp52week,ticker,totDebt,
-						totDebtEquity,trailPE) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-						?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (tickerDate,ks.avgDivYield,ks.avgVol10d,
-						ks.avgVol30d,ks.beta,ks.bookValPS,ks.cash,ks.cashPS,ks.companyName,ks.currRatio,
-						ks.d52week,ks.employees,ks.enterpriseValue,ks.floatShort,ks.fwdDivPS,ks.fwdDivYld,
-						ks.fwdPE,ks.grossProfit,ks.hi52week,ks.indext,ks.industry,ks.lo52week,ks.ma200day,
-						ks.ma50day,ks.marketCap,ks.netIncSH,ks.opCashFlow,ks.operateMarg,ks.payoutRatio,
-						ks.peg,ks.profitMarg,ks.pSales,ks.qEarnGrth,ks.qRevGrowth,ks.retAssets,ks.retEquity,
-						ks.revenue,ks.revenuePS,ks.sector,ks.shortRatio,ks.shrsShrt,ks.shrsShrtNew,ks.sp52week,
-						ks.ticker,ks.totDebt,ks.totDebtEquity,ks.trailPE))
-		db.commit()
+		try:
+			cursor.execute('''INSERT OR IGNORE INTO keyStats(tickerDate,avgDivYield,avgVol10d,
+							avgVol30d ,beta,bookValPS,cash,cashPS,companyName,currRatio,d52week,employees,
+							enterpriseValue ,floatShort,fwdDivPS,fwdDivYld,fwdPE,grossProfit ,hi52week,indext,
+							industry,lo52week,ma200day,ma50day,marketCap,netIncSH,opCashFlow,operateMarg,
+							payoutRatio,peg,profitMarg,pSales,qEarnGrth,qRevGrowth,retAssets,retEquity, 
+							revenue,revenuePS,sector,shortRatio,shrsShrt,shrsShrtNew,sp52week,ticker,totDebt,
+							totDebtEquity,trailPE) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
+							?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (tickerDate,ks.avgDivYield,ks.avgVol10d,
+							ks.avgVol30d,ks.beta,ks.bookValPS,ks.cash,ks.cashPS,ks.companyName,ks.currRatio,
+							ks.d52week,ks.employees,ks.enterpriseValue,ks.floatShort,ks.fwdDivPS,ks.fwdDivYld,
+							ks.fwdPE,ks.grossProfit,ks.hi52week,ks.indext,ks.industry,ks.lo52week,ks.ma200day,
+							ks.ma50day,ks.marketCap,ks.netIncSH,ks.opCashFlow,ks.operateMarg,ks.payoutRatio,
+							ks.peg,ks.profitMarg,ks.pSales,ks.qEarnGrth,ks.qRevGrowth,ks.retAssets,ks.retEquity,
+							ks.revenue,ks.revenuePS,ks.sector,ks.shortRatio,ks.shrsShrt,ks.shrsShrtNew,ks.sp52week,
+							ks.ticker,ks.totDebt,ks.totDebtEquity,ks.trailPE))
+			db.commit()
+		except Exception as err:
+			print('Error entering ', t, err)
+		
 		print(ks.companyName)
 	db.close		
 		
