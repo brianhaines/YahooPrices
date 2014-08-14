@@ -109,13 +109,13 @@ def main():
 	db.commit()
 
 	#Stoping time
-	fourPMstop = datetime.now().replace(hour=16, minute=0, second=2,microsecond=50000)
+	fourPMstop = datetime.now().replace(hour=16, minute=0, second=1,microsecond=50000)
 
 	#Pause until 9:30am
 	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
-	# while datetime.now()<startTime:
-	# 	sleep(1)
-	# 	print('Waiting for 9:30...',datetime.now())
+	while datetime.now()<startTime:
+		sleep(1)
+		print('Waiting for 9:30...',datetime.now())
 
 	#This for loops continuously
 	for char in r.iter_content():
