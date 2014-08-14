@@ -20,9 +20,7 @@ def stringGen(Chars,Char,numChars):
 
 	if len(Chars)==numChars:
 		charList = list(Chars)
-		r = range(numChars-1)
-		for i in r: #There is probably an array optimization here
-			newList.append(charList[i+1])
+		newList = charList[1:]
 		newList.append(Char)
 		return(''.join(newList))
 	else:
@@ -115,9 +113,9 @@ def main():
 
 	#Pause until 9:30am
 	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
-	while datetime.now()<startTime:
-		sleep(1)
-		print('Waiting for 9:30...',datetime.now())
+	# while datetime.now()<startTime:
+	# 	sleep(1)
+	# 	print('Waiting for 9:30...',datetime.now())
 
 	#This for loops continuously
 	for char in r.iter_content():
