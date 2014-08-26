@@ -4,9 +4,10 @@ print the data dict to the terminal.'''
 import requests
 from ast import literal_eval
 from datetime import datetime
-import sqlite3
+#import sqlite3
+import mysql.connector as mysql
 from time import sleep
-from keyStatsDB import keyStatsFunc
+from keyStatsDB_v2 import keyStatsFunc
 
 
 
@@ -95,17 +96,16 @@ def main():
 	inState = False #Start the machine in the Not Recording state
 	dataCollect = ''
 
-	#Fire up an SQLite3 database
-	db = None
-	#create or open existing db
-	DBstr = 'livePriceDB.db'	
-	db = sqlite3.connect(DBstr)
-	# Get a cursor object
+	#This is a text file with my db username and PW etc.
+	params = open('dbparams.txt').read()
+	params =  params.split(',')
+
+	db = mysql.connect(user=params[0],password=params[1],host=params[2],database=params[3])
 	cursor = db.cursor()
 	#This is an SQL string to create a table in the database.
-	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime TEXT unique PRIMARY KEY, 
-					Ticker TEXT, qDate DATE, qTime TEXT, LastPrice REAL, bid REAL, ask REAL, 
-					bidSize INTEGER, askSize INTEGER, volume INTEGER)''')
+	cursor.execute('''CREATE TABLE IF NOT EXISTS livePrices(tickTime VARCHAR(40) NOT NULL, 
+					Ticker VARCHAR(40), qDate DATE, qTime VARCHAR(40), LastPrice REAL, bid REAL, ask REAL, 
+					bidSize INTEGER, askSize INTEGER, volume INTEGER,PRIMARY KEY (tickTime))ENGINE=InnoDB''')
 	db.commit()
 
 	#Stoping time
@@ -152,7 +152,7 @@ def main():
 				
 				try:
 					cursor.execute('''INSERT INTO livePrices(tickTime, Ticker, qDate, qTime, LastPrice, 
-									bid, ask, bidSize, askSize, volume) VALUES(?,?,?,?,?,?,?,?,?,?)''', 
+									bid, ask, bidSize, askSize, volume) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''', 
 									(tickTime,ticker,qDate,qTime,LastPrice,bid,ask,bidSize,askSize,volume))
 					db.commit()
 				except Exception:
@@ -167,13 +167,14 @@ def main():
 			if datetime.now()>fourPMstop:
 				print("Quitting time!")
 				#Call the key stats function before quitting
-				keyStatsFunc(tickers,DBstr)
+				keyStatsFunc(tickers)
 				break	
 
 		#When current state is Record, record all the characters that come in.
 		if inState == True:
 			dataCollect = dataCollect + c
-	db.close
+	cursor.close()
+	db.close()
 
 if __name__ == '__main__':
 	main()
