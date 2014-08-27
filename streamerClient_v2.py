@@ -99,6 +99,7 @@ def main():
 
 	#This is a text file with my db username and PW etc.
 	params = open('dbparams.txt').read()
+	#params = open('/home/ubuntu/Yahoo/dbparams.txt').read()
 	params =  params.split(',')
 
 	db = mysql.connect(user=params[0],password=params[1],host=params[2],database=params[3])
