@@ -109,7 +109,7 @@ def main():
 	db.commit()
 
 	#Stoping time
-	fourPMstop = datetime.now().replace(hour=16, minute=0, second=1,microsecond=50000)
+	fourPMstop = datetime.now().replace(hour=16, minute=0, second=0,microsecond=50000)
 
 	#Pause until 9:30am
 	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
