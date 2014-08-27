@@ -2,6 +2,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from time import sleep
 from datetime import datetime
+import pytz
 
 
 class keyStats():
@@ -289,7 +290,8 @@ class keyStats():
 
 
 		#System time of the request
-		t = datetime.now()
+		eastern = pytz.timezone('US/Eastern')
+		t = datetime.now(eastern)
 		self.tDate = t.strftime("%Y-%m-%d")
 		self.tTime = t.strftime("%H-%M-%S")
 
