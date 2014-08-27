@@ -4,6 +4,7 @@ print the data dict to the terminal.'''
 import requests
 from ast import literal_eval
 from datetime import datetime
+import pytz
 #import sqlite3
 import mysql.connector as mysql
 from time import sleep
@@ -109,13 +110,14 @@ def main():
 	db.commit()
 
 	#Stoping time
-	fourPMstop = datetime.now().replace(hour=16, minute=0, second=0,microsecond=50000)
+	eastern = pytz.timezone('US/Eastern')
+	fourPMstop = datetime.now(eastern).replace(hour=16, minute=0, second=0,microsecond=50000)
 
 	#Pause until 9:30am
-	startTime = datetime.now().replace(hour=9, minute=29, second=59,microsecond=0)
-	while datetime.now()<startTime:
+	startTime = datetime.now(eastern).replace(hour=9, minute=29, second=59,microsecond=0)
+	while datetime.now(eastern)<startTime:
 		sleep(1)
-		print('Waiting for 9:30...',datetime.now())
+		print('Waiting for 9:30...',datetime.now(eastern))
 
 	#This for loops continuously
 	for char in r.iter_content():
@@ -129,7 +131,7 @@ def main():
 		if tagE == endQ:
 			#Transition current state to Not Recording
 			#Remove end tag from recorded string
-			t = datetime.now()
+			t = datetime.now(eastern)
 			notRecTime = (t.date().isoformat(),t.time().isoformat())
 			s = dataCollect[:len(dataCollect)-(len(endQ)-1)]
 			#Sometimes an empty string is returned, this skips them
@@ -164,7 +166,7 @@ def main():
 			inState = False #Not Recoding state
 			
 			#This ends the session at 4pm
-			if datetime.now()>fourPMstop:
+			if datetime.now(eastern)>fourPMstop:
 				print("Quitting time!")
 				#Call the key stats function before quitting
 				keyStatsFunc(tickers)
