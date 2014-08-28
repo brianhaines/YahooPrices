@@ -25,9 +25,9 @@ This requires installation of the `requests` package.
 
 Current goals include:
 
-1. Making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know I can do better. 
+1. Add multiprocessing with the goal of maintaining multiple streams from the yahoo server. More streams will increase the bandwidth for receiving updates.
 
-2. Add multiprocessing with the goal of maintaining multiple streams from the yahoo server. More streams will increase the bandwidth for receiving updates.
+2. Making eficiency improvements to the stringGen function which is called 2x for each byte that is parsed. While it works fine currently, I know I can do better. (Replaced for loop with list slicing, 75% reduction in processing time.)
 
 3. Improving the error handling around network errors so the client will continue in the case of an interuption.
 
